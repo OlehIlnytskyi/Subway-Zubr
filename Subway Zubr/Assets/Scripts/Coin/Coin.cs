@@ -4,13 +4,13 @@ public class Coin : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("You got a Coin!");
+        Managers.PlayerManager.AddCoins(1);
         StartCoroutine(Particles());
     }
     
     private IEnumerator Particles()
     {
-        Debug.Log("BEbra");
+        GetComponent<Animator>().enabled = false;
         GetComponent<MeshRenderer>().enabled = false;
         GetComponent<MeshCollider>().enabled = false;
         GetComponent<ParticleSystem>().Play();

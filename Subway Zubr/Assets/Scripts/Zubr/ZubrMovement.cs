@@ -11,7 +11,7 @@ public class ZubrMovement : MonoBehaviour
     private float roadOffsetX;
     private float sideSpeed;
     private float sliding;
-    private bool round;
+    private bool toRound;
 
     // Стрибок
     private bool jumping;
@@ -94,27 +94,12 @@ public class ZubrMovement : MonoBehaviour
 
         transform.Translate(movement * Time.deltaTime);
 
-        if (round)
+        if (toRound)
         {
             Vector3 pos = transform.position;
             pos.x = Mathf.Round(pos.x);
             transform.position = pos;
-            round = false;
-        }
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        switch (other.tag)
-        {
-            case "RoadSpawnTrigger":
-                Debug.Log("Spawn new road");
-                break;
-            case "PinkWard":
-                Destroy(gameObject);
-                break;
-            case "Ground":
-                grounded = true;
-                break;
+            toRound = false;
         }
     }
     private void GoSide()
@@ -126,7 +111,22 @@ public class ZubrMovement : MonoBehaviour
         {
             sliding = 0;
             toSide = Side.Center;
-            round = true;
+            toRound = true;
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        switch (other.tag)
+        {
+            case "RoadSpawnTrigger":
+                Managers.PathManager.AddRoad();
+                break;
+            case "PinkWard":
+                Destroy(gameObject);
+                break;
+            case "Ground":
+                grounded = true;
+                break;
         }
     }
 }

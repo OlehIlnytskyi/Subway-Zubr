@@ -7,6 +7,10 @@ TagManager:
   - RoadSpawnTrigger
   - PinkWard
   - Ground
+  - Road_1
+  - Road_2
+  - Road_3
+  - Road_4
   layers:
   - Default
   - TransparentFX
