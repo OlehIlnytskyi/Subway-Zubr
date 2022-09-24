@@ -5,12 +5,18 @@ TagManager:
   serializedVersion: 2
   tags:
   - RoadSpawnTrigger
-  - PinkWard
   - Ground
   - Road_1
   - Road_2
   - Road_3
   - Road_4
+  - Road_5
+  - Road_6
+  - Road_7
+  - Road_8
+  - Road_9
+  - Road_10
+  - ActiveItemPlaceholder
   layers:
   - Default
   - TransparentFX

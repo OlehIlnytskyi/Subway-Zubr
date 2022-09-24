@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Background : MonoBehaviour
 {
     private Vector3 pos;
-    private float speed = 6.0f;
     private bool toleft;
     private void Start()
     {
@@ -13,12 +10,12 @@ public class Background : MonoBehaviour
     }
     void Update()
     {
-        pos.z += speed * Time.deltaTime;
+        pos.z += ZubrMovement.movementSpeed * Time.deltaTime;
 
         if (toleft)
         {
             pos.x -= Time.deltaTime;
-            if (pos.x <= -1)
+            if (pos.x <= -2)
             {
                 toleft = !toleft;
             }
@@ -26,7 +23,7 @@ public class Background : MonoBehaviour
         else
         {
             pos.x += Time.deltaTime;
-            if (pos.x >= 1)
+            if (pos.x >= 2)
             {
                 toleft = !toleft;
             }

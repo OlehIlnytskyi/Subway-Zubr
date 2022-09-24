@@ -4,18 +4,24 @@ using UnityEngine;
 
 public class PathManager : MonoBehaviour, IGameManager
 {
+    //-------------------------------------------------
     public ManagerStatus status { get; private set; }
     [SerializeField] private GameObject[] roads;
+
+    //-------------------------------------------------
 
     private List<GameObject> currentPath;
     private int pathLength;
     private Vector3 pos;
 
+    //-------------------------------------------------
+
+    [SerializeField] private GameObject[] activeItems;
     public void Initialize()
     {
         status = ManagerStatus.Initializing;
         //
-        pathLength = 3;
+        pathLength = 4;
         pos = new Vector3(0, 0, 45);
         currentPath = new List<GameObject>();
 
@@ -29,11 +35,19 @@ public class PathManager : MonoBehaviour, IGameManager
     }
     public void AddRoad()
     {
-        if (currentPath.Count < 3)
+        if (currentPath.Count < pathLength)
         {
             GameObject road = Instantiate(GetRoad());
             road.transform.position = pos;
             pos.z += 90;
+
+            if (Random.Range(0, 100) < 100)
+            {
+                GameObject activeItem = Instantiate(activeItems[Random.Range(0, activeItems.Length)]);
+                activeItem.transform.parent = road.transform;
+                activeItem.transform.position = GetActiveItemTransform(road).position;
+            }
+
             currentPath.Add(road);
         }
         else
@@ -62,5 +76,17 @@ public class PathManager : MonoBehaviour, IGameManager
         }
 
         return road;
+    }
+    private Transform GetActiveItemTransform(GameObject road)
+    {
+        foreach (Transform tr in road.transform)
+        {
+            if (tr.tag == "ActiveItemPlaceholder")
+            {
+                Debug.Log("Found!");
+                return tr;
+            }
+        }
+        return null;
     }
 }

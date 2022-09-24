@@ -3,20 +3,21 @@ using UnityEngine;
 public class ZubrMovement : MonoBehaviour
 {
     // Рух
-    private float speed;
+    public static float movementSpeed { get; private set; }
+    private float startSpeed;   // Базова швидкість
     private Vector3 movement;
 
     // Переміщення в сторони
     private Side toSide;
-    private float roadOffsetX;
-    private float sideSpeed;
-    private float sliding;
-    private bool toRound;
+    private float roadOffsetX;  // Ширина однієї доріжки
+    private float sideSpeed;    // Швидкість переміщення між доріжками
+    private float sliding;      // На яку відстань потрібно посунутись
+    private bool toRound;       // Заокруглення переміщення в сторони
 
     // Стрибок
-    private bool jumping;
-    private bool grounded;
-    private float gravity;
+    private bool jumping;   // Перевіряє чи персонаж у повітрі
+    private bool grounded;  // Чи персонаж приземлений
+    private float gravity;  // Сила тяжіння
 
     private void Start()
     {
@@ -24,9 +25,7 @@ public class ZubrMovement : MonoBehaviour
         toSide = Side.Center;
         roadOffsetX = 2.0f;
         sideSpeed = 3f;
-
-        // Рух
-        speed = 6.0f;
+        startSpeed = 6.0f;
 
         // Стрибок
         gravity = 6.0f;
@@ -35,7 +34,8 @@ public class ZubrMovement : MonoBehaviour
     {
         movement = Vector3.zero;
         // Рух
-        movement.z += speed;
+        movementSpeed = startSpeed * Managers.multiplayer;
+        movement.z += movementSpeed;
 
         // Пемеріщення в сторони
         if (toSide != Side.Center)
@@ -86,13 +86,21 @@ public class ZubrMovement : MonoBehaviour
         {
             if (!jumping && grounded)
             {
+                GetComponent<ParticleSystem>().Play();
                 gravity = 6.0f;
                 jumping = true;
                 grounded = false;
             }
         }
 
-        transform.Translate(movement * Time.deltaTime);
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            if (grounded)
+            {
+            }
+        }
+
+        transform.Translate(movement * Time.deltaTime, Space.World);
 
         if (toRound)
         {
@@ -104,8 +112,8 @@ public class ZubrMovement : MonoBehaviour
     }
     private void GoSide()
     {
-        sliding -= sideSpeed * Time.deltaTime;
-        movement.x += sideSpeed * (int)toSide;
+        sliding -= sideSpeed * Time.deltaTime * Managers.multiplayer;
+        movement.x += sideSpeed * (int)toSide * Managers.multiplayer;
 
         if (sliding <= 0)
         {
@@ -116,17 +124,9 @@ public class ZubrMovement : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        switch (other.tag)
+        if (other.CompareTag("Ground"))
         {
-            case "RoadSpawnTrigger":
-                Managers.PathManager.AddRoad();
-                break;
-            case "PinkWard":
-                Destroy(gameObject);
-                break;
-            case "Ground":
-                grounded = true;
-                break;
+            grounded = true;
         }
     }
 }
