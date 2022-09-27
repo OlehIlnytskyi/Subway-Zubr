@@ -41,7 +41,7 @@ public class PathManager : MonoBehaviour, IGameManager
             road.transform.position = pos;
             pos.z += 90;
 
-            if (Random.Range(0, 100) < 100)
+            if (Random.Range(0, 100) < 20)
             {
                 GameObject activeItem = Instantiate(activeItems[Random.Range(0, activeItems.Length)]);
                 activeItem.transform.parent = road.transform;

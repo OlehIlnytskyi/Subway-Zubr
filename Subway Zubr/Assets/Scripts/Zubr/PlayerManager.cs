@@ -3,7 +3,9 @@ using UnityEngine.UI;
 public class PlayerManager : MonoBehaviour, IGameManager
 {
     public ManagerStatus status { get; private set; }
-
+    [SerializeField] private GameObject player;
+    private Colors toColor;
+    private float scale;
     public int maxHealth { get; private set; }
     private int health;
 
@@ -21,6 +23,27 @@ public class PlayerManager : MonoBehaviour, IGameManager
         //
         status = ManagerStatus.Started;
     }
+    private void Update()
+    {
+        if (toColor != Colors.None)
+        {
+            Color green = new Color(0, 0.745f, 0, 1);
+            scale += Time.deltaTime * 3;
+            Debug.Log(scale);
+
+            switch (toColor)
+            {
+                case Colors.Red:
+                    player.GetComponent<Renderer>().material.color = Color.Lerp(green, Color.red, scale);
+                    if (scale >= 1) { toColor = Colors.Green; scale = 0; }
+                    break;
+                case Colors.Green:
+                    player.GetComponent<Renderer>().material.color = Color.Lerp(Color.red, green, scale);
+                    if (scale >= 1) { toColor = Colors.None; scale = 0; }
+                    break;
+            }
+        }
+    }
     public void AddCoins(int value)
     {
         if (coins >= maxCoins)
@@ -34,6 +57,11 @@ public class PlayerManager : MonoBehaviour, IGameManager
     public void AddHealth(int value)
     {
         health += value;
+
+        if (value < 0)
+        {
+            toColor = Colors.Red;
+        }
 
         if (health > maxHealth)
         {
@@ -50,6 +78,12 @@ public class PlayerManager : MonoBehaviour, IGameManager
 
     private void Death()
     {
-        //GetComponent<Renderer>().material.color = Color.red; «робити дл€ ≥грока
+        player.GetComponent<Renderer>().material.color = Color.red;
     }
+}
+enum Colors
+{
+    None,
+    Red,
+    Green
 }

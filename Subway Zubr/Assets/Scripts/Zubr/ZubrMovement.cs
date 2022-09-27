@@ -25,7 +25,7 @@ public class ZubrMovement : MonoBehaviour
         toSide = Side.Center;
         roadOffsetX = 2.0f;
         sideSpeed = 3f;
-        startSpeed = 6.0f;
+        startSpeed = 25.0f;
 
         // Стрибок
         gravity = 6.0f;
