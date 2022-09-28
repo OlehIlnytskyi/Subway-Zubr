@@ -18,6 +18,7 @@ public class ZubrMovement : MonoBehaviour
     private bool jumping;   // Перевіряє чи персонаж у повітрі
     private bool grounded;  // Чи персонаж приземлений
     private float gravity;  // Сила тяжіння
+    public float jumpHeight;
 
     private void Start()
     {
@@ -25,10 +26,11 @@ public class ZubrMovement : MonoBehaviour
         toSide = Side.Center;
         roadOffsetX = 2.0f;
         sideSpeed = 3f;
-        startSpeed = 25.0f;
+        startSpeed = 6.0f;
 
         // Стрибок
         gravity = 6.0f;
+        jumpHeight = 3.0f;
     }
     void Update()
     {
@@ -46,7 +48,7 @@ public class ZubrMovement : MonoBehaviour
         // Стрибок
         if (jumping)
         {
-            gravity -= Time.deltaTime * 3;
+            gravity -= (3 - Managers.multiplayer / jumpHeight) * Time.deltaTime;
             movement.y += gravity;
 
             if (transform.position.y >= 3f)

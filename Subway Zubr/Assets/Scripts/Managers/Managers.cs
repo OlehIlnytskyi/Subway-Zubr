@@ -6,13 +6,16 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerManager))]
 [RequireComponent(typeof(PathManager))]
 [RequireComponent(typeof(UIManager))]
+[RequireComponent(typeof(ItemsManager))]
 public class Managers : MonoBehaviour
 {
     public static float multiplayer { get; private set; }
+    public static GameObject player { get; private set; }
     //-------------------------------------------------
     public static PlayerManager PlayerManager { get; private set; }
     public static PathManager PathManager { get; private set; }
     public static UIManager UIManager { get; private set; }
+    public static ItemsManager ItemsManager { get; private set; }
     //public static SoundManager SoundManager { get; private set; }
 
     //-------------------------------------------------
@@ -28,9 +31,12 @@ public class Managers : MonoBehaviour
     {
         multiplayer = 1.0f;
 
+        player = GameObject.Find("Zubr");
+
         PlayerManager = GetComponent<PlayerManager>();
         PathManager = GetComponent<PathManager>();
         UIManager = GetComponent<UIManager>();
+        ItemsManager = GetComponent<ItemsManager>();
         //SoundManager = GetComponent<SoundManager>();
 
         _startSequence = new List<IGameManager>();
@@ -38,6 +44,7 @@ public class Managers : MonoBehaviour
         _startSequence.Add(PlayerManager);
         _startSequence.Add(PathManager);
         _startSequence.Add(UIManager);
+        _startSequence.Add(ItemsManager);
         //_startSequence.Add(SoundManager);
 
         StartCoroutine(StartupManagers());
