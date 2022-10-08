@@ -3,13 +3,12 @@ using UnityEngine;
 public class ItemsManager : MonoBehaviour, IGameManager
 {
     public ManagerStatus status { get; private set; }
-    private float itemDuration;
 
     public void Initialize()
     {
         status = ManagerStatus.Initializing;
         //
-        itemDuration = 5.0f;
+
         //
         status = ManagerStatus.Started;
     }

@@ -9,7 +9,6 @@ public class UIManager : MonoBehaviour, IGameManager
     [SerializeField] private Slider sliderHealth;
     [SerializeField] private Slider sliderCoins;
     [SerializeField] private Slider sliderItem;
-    private bool activateItem;
     public void Initialize()
     {
         status = ManagerStatus.Initializing;
@@ -23,9 +22,8 @@ public class UIManager : MonoBehaviour, IGameManager
         sliderCoins.GetComponentInChildren<TextMeshProUGUI>().text = sliderCoins.value + "/" + sliderCoins.maxValue;
 
         sliderItem.value = 0f;
-        sliderItem.maxValue = 5.0f;
+        sliderItem.maxValue = 8.0f;
         sliderItem.gameObject.SetActive(false);
-        activateItem = false;
         //
         status = ManagerStatus.Started;
     }
@@ -45,23 +43,24 @@ public class UIManager : MonoBehaviour, IGameManager
     }
     public void SetItemUI(Item item)
     {
-        sliderItem.value = 5.0f;
+        sliderItem.value = sliderItem.maxValue;
         sliderItem.gameObject.SetActive(true);
-        activateItem = true;
-        Debug.Log("Set 5");
+        StartCoroutine(ActivateItem());
     }
-    private void Update()
+    private IEnumerator ActivateItem()
     {
-        if (activateItem == true)
+        yield return new WaitForFixedUpdate();
+
+        if (sliderItem.value > 0)
         {
             sliderItem.value -= Time.deltaTime;
-            sliderItem.GetComponentInChildren<Image>().color = Color.Lerp(Color.red, Color.green, sliderItem.value / 5f);
-            if (sliderItem.value <= 0)
-            {
-                activateItem = false;
-                sliderItem.value = 0;
-                sliderItem.gameObject.SetActive(false);
-            }
+            sliderItem.GetComponentInChildren<Image>().color = Color.Lerp(Color.red, Color.green, sliderItem.value / sliderItem.maxValue);
+            yield return StartCoroutine(ActivateItem());
+        }
+        else
+        {
+            sliderItem.value = 0;
+            sliderItem.gameObject.SetActive(false);
         }
     }
 }
