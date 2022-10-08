@@ -3,30 +3,26 @@ using UnityEngine;
 public class ZubrMovement : MonoBehaviour
 {
     // Рух
-    public static float movementSpeed { get; private set; }
-    private float startSpeed;   // Базова швидкість
-    private Vector3 movement;
+    private Vector3     movement;
+    private float       moveSpeed;
 
     // Переміщення в сторони
-    private Side toSide;
-    private float roadOffsetX;  // Ширина однієї доріжки
-    private float sideSpeed;    // Швидкість переміщення між доріжками
-    private float sliding;      // На яку відстань потрібно посунутись
-    private bool toRound;       // Заокруглення переміщення в сторони
+    private Side        toSide;
+    private float       roadOffsetX;    // Ширина однієї доріжки
+    private float       sliding;        // На яку відстань потрібно посунутись
 
     // Стрибок
-    private bool jumping;   // Перевіряє чи персонаж у повітрі
-    private bool grounded;  // Чи персонаж приземлений
-    private float gravity;  // Сила тяжіння
-    public float jumpHeight;
+    private bool        jumping;        // Перевіряє чи персонаж у повітрі
+    private bool        grounded;       // Чи персонаж приземлений
+    private float       gravity;        // Сила тяжіння
+    private float       jumpHeight;
 
     private void Start()
     {
         // Переміщення в сторони
-        toSide = Side.Center;
+        toSide = Side.None;
         roadOffsetX = 2.0f;
-        sideSpeed = 3f;
-        startSpeed = 6.0f;
+        sliding = 0f;
 
         // Стрибок
         gravity = 6.0f;
@@ -35,95 +31,99 @@ public class ZubrMovement : MonoBehaviour
     void Update()
     {
         movement = Vector3.zero;
-        // Рух
-        movementSpeed = startSpeed * Managers.multiplayer;
-        movement.z += movementSpeed;
 
-        // Пемеріщення в сторони
-        if (toSide != Side.Center)
+        MoveForward();
+        MoveSide();
+        MoveUp();
+        MoveDown();
+
+        transform.Translate(movement * Time.deltaTime, Space.World);
+    }
+
+    public void Jump()
+    {
+        if (!jumping && grounded)
         {
-            GoSide();
+            GetComponent<ParticleSystem>().Play();
+            gravity = 6.0f;
+            jumping = true;
+            grounded = false;
+        }
+    }
+
+    public void GoLeft()
+    {
+        if (transform.position.x == 0f || transform.position.x == roadOffsetX)
+        {
+            toSide = Side.Left;
+        }
+    }
+
+    public void GoRight()
+    {
+        if (transform.position.x == 0f || transform.position.x == -roadOffsetX)
+        {
+            toSide = Side.Right;
+        }
+    }
+
+    private void MoveForward()
+    {
+        moveSpeed = Managers.main.PlayerManager.speed * Managers.main.GameManager.multiplayer;
+        movement.z = moveSpeed;
+    }
+
+    private void MoveUp()
+    {
+        if (jumping == false)
+        {
+            return;
         }
 
-        // Стрибок
-        if (jumping)
+        if (transform.position.y >= jumpHeight)
         {
-            gravity -= (3 - Managers.multiplayer / jumpHeight) * Time.deltaTime;
-            movement.y += gravity;
-
-            if (transform.position.y >= 3f)
-            {
-                jumping = false;
-            }
+            jumping = false;
         }
-        else if (!jumping && !grounded)
+
+        gravity -= (3 - Managers.main.GameManager.multiplayer / jumpHeight) * Time.deltaTime;
+        movement.y += gravity;
+    }
+
+    private void MoveDown()
+    {
+        if (grounded == false && jumping == false)
         {
             if (gravity < 6.0f)
             {
                 gravity += Time.deltaTime * 4;
             }
-                movement.y -= gravity;
+
+            movement.y -= gravity;
+        }
+    }
+
+    private void MoveSide()
+    {
+        if (toSide == Side.None)
+        {
+            return;
         }
 
-        if (Input.GetKeyDown(KeyCode.A))
+        if (sliding <= -roadOffsetX || sliding >= roadOffsetX)
         {
-            if (transform.position.x == 0f || transform.position.x == roadOffsetX)
-            {
-                sliding = roadOffsetX;
-                toSide = Side.Left;
-            }
-        }
+            sliding = 0;
+            toSide = Side.None;
 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            if (transform.position.x == 0f || transform.position.x == -roadOffsetX)
-            {
-                sliding = roadOffsetX;
-                toSide = Side.Right;
-            }
-        }
-
-        // Стрибок
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            if (!jumping && grounded)
-            {
-                GetComponent<ParticleSystem>().Play();
-                gravity = 6.0f;
-                jumping = true;
-                grounded = false;
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            if (grounded)
-            {
-            }
-        }
-
-        transform.Translate(movement * Time.deltaTime, Space.World);
-
-        if (toRound)
-        {
             Vector3 pos = transform.position;
             pos.x = Mathf.Round(pos.x);
             transform.position = pos;
-            toRound = false;
+            return;
         }
-    }
-    private void GoSide()
-    {
-        sliding -= sideSpeed * Time.deltaTime * Managers.multiplayer;
-        movement.x += sideSpeed * (int)toSide * Managers.multiplayer;
 
-        if (sliding <= 0)
-        {
-            sliding = 0;
-            toSide = Side.Center;
-            toRound = true;
-        }
+        movement.x += moveSpeed / 2 * ((int)toSide);
+        sliding    += movement.x * Time.deltaTime;
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Ground"))

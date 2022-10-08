@@ -13,12 +13,12 @@ public class UIManager : MonoBehaviour, IGameManager
     {
         status = ManagerStatus.Initializing;
         //
-        sliderHealth.value = sliderHealth.maxValue = Managers.PlayerManager.maxHealth;
+        sliderHealth.value = sliderHealth.maxValue = Managers.main.PlayerManager.maxHealth;
         sliderHealth.GetComponentInChildren<TextMeshProUGUI>().text = sliderHealth.value + "/" + sliderHealth.maxValue;
 
 
         sliderCoins.value = 0;
-        sliderCoins.maxValue = Managers.PlayerManager.maxCoins;
+        sliderCoins.maxValue = Managers.main.PlayerManager.maxCoins;
         sliderCoins.GetComponentInChildren<TextMeshProUGUI>().text = sliderCoins.value + "/" + sliderCoins.maxValue;
 
         sliderItem.value = 0f;
@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour, IGameManager
         //
         status = ManagerStatus.Started;
     }
+
     public void SetCoinsUI(int coins)
     {
         sliderCoins.value = coins;

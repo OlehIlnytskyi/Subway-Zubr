@@ -10,7 +10,7 @@ public class Background : MonoBehaviour
     }
     void Update()
     {
-        pos.z += ZubrMovement.movementSpeed * Time.deltaTime;
+        pos.z += Managers.main.PlayerManager.speed * Managers.main.GameManager.multiplayer * Time.deltaTime;
 
         if (toleft)
         {

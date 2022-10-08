@@ -1,7 +1,6 @@
 public interface IGameManager
 {
     ManagerStatus status { get; }
-
     void Initialize();
 }
 public enum ManagerStatus

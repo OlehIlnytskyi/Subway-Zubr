@@ -4,17 +4,14 @@ using UnityEngine;
 
 public class PathManager : MonoBehaviour, IGameManager
 {
-    //-------------------------------------------------
     public ManagerStatus status { get; private set; }
     [SerializeField] private GameObject[] roads;
 
-    //-------------------------------------------------
 
     private List<GameObject> currentPath;
     private int pathLength;
     private Vector3 pos;
 
-    //-------------------------------------------------
 
     [SerializeField] private GameObject[] activeItems;
     public void Initialize()

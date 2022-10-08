@@ -1,16 +1,22 @@
 using UnityEngine;
-using UnityEngine.UI;
+
 public class PlayerManager : MonoBehaviour, IGameManager
 {
     public ManagerStatus status { get; private set; }
 
+    [SerializeField] private GameObject player;
+    [SerializeField] public float speed;
+
+    public int maxHealth        { get; private set; }
+    public int maxCoins         { get; private set; }
+    private int health;
+    private int coins;
+
+
+
+    //
     private Colors toColor;
     private float scale;
-    public int maxHealth { get; private set; }
-    private int health;
-
-    public int maxCoins { get; private set; }
-    private int coins;
 
     public void Initialize()
     {
@@ -25,6 +31,29 @@ public class PlayerManager : MonoBehaviour, IGameManager
     }
     private void Update()
     {
+        if (Input.anyKeyDown)
+        {
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                player.GetComponent<ZubrMovement>().Jump();
+            }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                player.GetComponent<ZubrMovement>().GoLeft();
+            }
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                player.GetComponent<ZubrMovement>().GoRight();
+            }
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                //player.GetComponent<ZubrMovement>().Slide();
+            }
+        }
+
+
+
+
         if (toColor != Colors.None)
         {
             Color green = new Color(0, 0.745f, 0, 1);
@@ -33,16 +62,17 @@ public class PlayerManager : MonoBehaviour, IGameManager
             switch (toColor)
             {
                 case Colors.Red:
-                    Managers.player.GetComponent<Renderer>().material.color = Color.Lerp(green, Color.red, scale);
+                    player.GetComponent<Renderer>().material.color = Color.Lerp(green, Color.red, scale);
                     if (scale >= 1) { toColor = Colors.Green; scale = 0; }
                     break;
                 case Colors.Green:
-                    Managers.player.GetComponent<Renderer>().material.color = Color.Lerp(Color.red, green, scale);
+                    player.GetComponent<Renderer>().material.color = Color.Lerp(Color.red, green, scale);
                     if (scale >= 1) { toColor = Colors.None; scale = 0; }
                     break;
             }
         }
     }
+
     public void AddCoins(int value)
     {
         if (coins >= maxCoins)
@@ -50,8 +80,9 @@ public class PlayerManager : MonoBehaviour, IGameManager
             return;
         }
         coins += value;
-        Managers.UIManager.SetCoinsUI(coins);
+        Managers.main.UIManager.SetCoinsUI(coins);
     }
+
     public void AddHealth(int value)
     {
         health += value;
@@ -71,11 +102,11 @@ public class PlayerManager : MonoBehaviour, IGameManager
             Death();
         }
 
-        Managers.UIManager.SetHealthUI(health);
+        Managers.main.UIManager.SetHealthUI(health);
     }
     private void Death()
     {
-        Managers.player.GetComponent<Renderer>().material.color = Color.red;
+        player.GetComponent<Renderer>().material.color = Color.red;
     }
 }
 enum Colors

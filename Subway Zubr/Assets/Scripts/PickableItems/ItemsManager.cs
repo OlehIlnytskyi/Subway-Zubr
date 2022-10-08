@@ -17,14 +17,14 @@ public class ItemsManager : MonoBehaviour, IGameManager
         switch (item)
         {
             case Item.Coin:
-                Managers.PlayerManager.AddCoins(1);
+                Managers.main.PlayerManager.AddCoins(1);
                 break;
             case Item.ToiletPaper:
-                Managers.UIManager.SetItemUI(item);
+                Managers.main.UIManager.SetItemUI(item);
 
                 break;
             case Item.PinkWard:
-                Managers.UIManager.SetItemUI(item);
+                Managers.main.UIManager.SetItemUI(item);
 
                 break;
         }

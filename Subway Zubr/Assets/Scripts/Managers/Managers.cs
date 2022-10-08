@@ -2,41 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//[RequireComponent(typeof(SoundManager))]
-[RequireComponent(typeof(PlayerManager))]
-[RequireComponent(typeof(PathManager))]
-[RequireComponent(typeof(UIManager))]
-[RequireComponent(typeof(ItemsManager))]
 public class Managers : MonoBehaviour
 {
-    public static float multiplayer { get; private set; }
-    public static GameObject player { get; private set; }
-    //-------------------------------------------------
-    public static PlayerManager PlayerManager { get; private set; }
-    public static PathManager PathManager { get; private set; }
-    public static UIManager UIManager { get; private set; }
-    public static ItemsManager ItemsManager { get; private set; }
-    //public static SoundManager SoundManager { get; private set; }
+    public static Managers main          { get; private set; }
 
-    //-------------------------------------------------
+    public GameManager   GameManager     { get; private set; }
+    public PlayerManager PlayerManager   { get; private set; }
+    public UIManager     UIManager       { get; private set; }
+    public PathManager   PathManager     { get; private set; }
+    public ItemsManager  ItemsManager    { get; private set; }
+    //public static SoundManager SoundManager { get; private set; }
 
     private List<IGameManager> _startSequence;
 
-    //-------------------------------------------------
     public void Exit()
     {
         Application.Quit();
     }
+
     void Awake()
     {
-        multiplayer = 1.0f;
+        if (main != null && main != this)
+        {
+            Debug.LogWarning("Deleting main");
+            Destroy(this);
+            return;
+        }
+        else
+        {
+            main = this;
+        }
 
-        player = GameObject.Find("Zubr");
-
-        PlayerManager = GetComponent<PlayerManager>();
-        PathManager = GetComponent<PathManager>();
-        UIManager = GetComponent<UIManager>();
-        ItemsManager = GetComponent<ItemsManager>();
+        PlayerManager = GetComponentInChildren<PlayerManager>();
+        PathManager = GetComponentInChildren<PathManager>();
+        UIManager = GetComponentInChildren<UIManager>();
+        ItemsManager = GetComponentInChildren<ItemsManager>();
+        GameManager = GetComponentInChildren<GameManager>();
         //SoundManager = GetComponent<SoundManager>();
 
         _startSequence = new List<IGameManager>();
@@ -45,6 +46,7 @@ public class Managers : MonoBehaviour
         _startSequence.Add(PathManager);
         _startSequence.Add(UIManager);
         _startSequence.Add(ItemsManager);
+        _startSequence.Add(GameManager);
         //_startSequence.Add(SoundManager);
 
         StartCoroutine(StartupManagers());
@@ -74,10 +76,5 @@ public class Managers : MonoBehaviour
             yield return null;
         }
         Debug.Log("All managers started up");
-    }
-    private void Update()
-    {
-        multiplayer += (Time.deltaTime / 40) / multiplayer;
-        //Debug.Log(multiplayer);
     }
 }

@@ -5,8 +5,8 @@ public class Box : MonoBehaviour
     private void Start()
     {
         Vector3 rotation = Vector3.zero;
-        rotation.x = Random.Range(0, 5) * 90f + 2f * Managers.multiplayer;
-        rotation.z = Random.Range(0, 5) * 90f + 2f * Managers.multiplayer;
+        rotation.x = Random.Range(0, 5) * 90f + 2f * Managers.main.GameManager.multiplayer;
+        rotation.z = Random.Range(0, 5) * 90f + 2f * Managers.main.GameManager.multiplayer;
         rotation.y = Random.Range(-30f, 31f);
         gameObject.transform.eulerAngles = rotation;
     }
@@ -14,7 +14,7 @@ public class Box : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            Managers.PlayerManager.AddHealth(-25);
+            Managers.main.PlayerManager.AddHealth(-25);
             Destroy(gameObject);
         }
     }

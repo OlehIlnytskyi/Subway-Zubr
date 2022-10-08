@@ -6,7 +6,7 @@ public class ActiveItem : MonoBehaviour
     [SerializeField] private Item item;
     private void OnTriggerEnter(Collider other)
     {
-        Managers.ItemsManager.ActiveItem(item);
+        Managers.main.ItemsManager.ActiveItem(item);
 
         StartCoroutine(Particles());
     }
